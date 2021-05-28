@@ -139,6 +139,23 @@ var ARM struct {
 	_           CacheLinePad
 }
 
+// LOONGARCH64 contains the supported CPU features of the current loongarch64 platform.
+var LOONGARCH64 struct {
+	_         CacheLinePad
+	HasCPUCFG bool
+	HasFPU    bool
+	HasLSX    bool
+	HasLASX   bool
+	HasLBT    bool
+	HasLVZ    bool
+	HasAES    bool // AES hardware implementation
+	HasCRC32  bool // CRC32 hardware implementation
+	HasSHA1   bool // SHA1 hardware implementation
+	HasSHA2   bool // SHA2 hardware implementation
+	HasSHA3   bool // SHA3 hardware implementation
+	_         CacheLinePad
+}
+
 // MIPS64X contains the supported CPU features of the current mips64/mips64le
 // platforms. If the current platform is not mips64/mips64le or the current
 // operating system is not Linux then all feature flags are false.

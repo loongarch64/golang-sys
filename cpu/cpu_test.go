@@ -53,6 +53,18 @@ func TestARM64minimalFeatures(t *testing.T) {
 	}
 }
 
+func TestLOONGARCH64minimalFeatures(t *testing.T) {
+	if runtime.GOARCH != "loongarch64" || runtime.GOOS == "linux" {
+		return
+	}
+	if !cpu.LOONGARCH64.HasCPUCFG {
+		t.Fatal("HasCPUCFG expected true, got false")
+	}
+	if !cpu.LOONGARCH64.HasFPU {
+		t.Fatal("HasFPU expected true, got false")
+	}
+}
+
 func TestMIPS64Initialized(t *testing.T) {
 	if runtime.GOARCH == "mips64" || runtime.GOARCH == "mips64le" {
 		if !cpu.Initialized {

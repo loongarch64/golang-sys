@@ -46,6 +46,7 @@ func hostByteOrder() byteOrder {
 	case "386", "amd64", "amd64p32",
 		"alpha",
 		"arm", "arm64",
+		"loongarch64",
 		"mipsle", "mips64le", "mips64p32le",
 		"nios2",
 		"ppc64le",
