@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build linux && loongarch64
-// +build linux
-// +build loongarch64
-
 package cpu
 
 // HWCAP/HWCAP2 bits. These are exposed by the Linux kernel.
