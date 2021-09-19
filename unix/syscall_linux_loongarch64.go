@@ -26,12 +26,11 @@ func EpollCreate(size int) (fd int, err error) {
 //sysnb	Getegid() (egid int)
 //sysnb	Geteuid() (euid int)
 //sysnb	Getgid() (gid int)
-//sysnb	Getrlimit(resource int, rlim *Rlimit) (err error)
+//sysnb	getrlimit(resource int, rlim *Rlimit) (err error)
 //sysnb	Getuid() (uid int)
 //sys	Listen(s int, n int) (err error)
 //sys	Pread(fd int, p []byte, offset int64) (n int, err error) = SYS_PREAD64
 //sys	Pwrite(fd int, p []byte, offset int64) (n int, err error) = SYS_PWRITE64
-//sys	Renameat(olddirfd int, oldpath string, newdirfd int, newpath string) (err error) = SYS_RENAMEAT2
 //sys	Seek(fd int, offset int64, whence int) (off int64, err error) = SYS_LSEEK
 
 func Select(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timeval) (n int, err error) {
@@ -48,7 +47,7 @@ func Select(nfd int, r *FdSet, w *FdSet, e *FdSet, timeout *Timeval) (n int, err
 //sysnb	Setregid(rgid int, egid int) (err error)
 //sysnb	Setresgid(rgid int, egid int, sgid int) (err error)
 //sysnb	Setresuid(ruid int, euid int, suid int) (err error)
-//sysnb	Setrlimit(resource int, rlim *Rlimit) (err error)
+//sysnb	setrlimit(resource int, rlim *Rlimit) (err error)
 //sysnb	Setreuid(ruid int, euid int) (err error)
 //sys	Shutdown(fd int, how int) (err error)
 //sys	Splice(rfd int, roff *int64, wfd int, woff *int64, len int, flags int) (n int64, err error)
@@ -169,6 +168,24 @@ func Pipe2(p []int, flags int) (err error) {
 	return
 }
 
+// Getrlimit prefers the prlimit64 system call. See issue 38604.
+func Getrlimit(resource int, rlim *Rlimit) error {
+	err := Prlimit(0, resource, nil, rlim)
+	if err != ENOSYS {
+		return err
+	}
+	return getrlimit(resource, rlim)
+}
+
+// Setrlimit prefers the prlimit64 system call. See issue 38604.
+func Setrlimit(resource int, rlim *Rlimit) error {
+	err := Prlimit(0, resource, rlim, nil)
+	if err != ENOSYS {
+		return err
+	}
+	return setrlimit(resource, rlim)
+}
+
 func (r *PtraceRegs) PC() uint64 { return r.Pc }
 
 func (r *PtraceRegs) SetPC(pc uint64) { r.Pc = pc }
@@ -216,6 +233,10 @@ func Poll(fds []PollFd, timeout int) (n int, err error) {
 		return ppoll(nil, 0, ts, nil)
 	}
 	return ppoll(&fds[0], len(fds), ts, nil)
+}
+
+func Renameat(olddirfd int, oldpath string, newdirfd int, newpath string) (err error) {
+	return Renameat2(olddirfd, oldpath, newdirfd, newpath, 0)
 }
 
 //sys	kexecFileLoad(kernelFd int, initrdFd int, cmdlineLen int, cmdline string, flags int) (err error)
