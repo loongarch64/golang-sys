@@ -235,7 +235,7 @@ type Sigset_t struct {
 	Val [16]uint64
 }
 
-const _C__NSIG = 0x80
+const _C__NSIG = 0x40
 
 type Termios struct {
 	Iflag  uint32
